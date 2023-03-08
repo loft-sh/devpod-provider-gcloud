@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-# This script will build vcluster and calculate hash for each
-# (VCLUSTER_BUILD_PLATFORMS, VCLUSTER_BUILD_ARCHS) pair.
-# VCLUSTER_BUILD_PLATFORMS="linux" VCLUSTER_BUILD_ARCHS="amd64" ./hack/build-all.bash
-# can be called to build only for linux-amd64
-
 set -e
 
 export GO111MODULE=on
@@ -24,9 +19,7 @@ if [[ "$(pwd)" != "${PROVIDER_ROOT}" ]]; then
   exit 1
 fi
 
-RELEASE_VERSION="${RELEASE_VERSION}" go generate ${VCLUSTER_ROOT}/...
-
-GO_BUILD_CMD="go build -a"
+GO_BUILD_CMD="go build"
 GO_BUILD_LDFLAGS="-s -w"
 
 if [[ -z "${PROVIDER_BUILD_PLATFORMS}" ]]; then
