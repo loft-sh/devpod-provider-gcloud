@@ -85,7 +85,7 @@ func (c *Client) Delete(ctx context.Context, name string) error {
 	return operation.Wait(ctx)
 }
 
-func (c *Client) Status(ctx context.Context, name string) (client.Status, error) {
+func (c *Client) Get(ctx context.Context, name string) (*computepb.Instance, error) {
 	instance, err := c.InstanceClient.Get(ctx, &computepb.GetInstanceRequest{
 		Instance: name,
 		Project:  c.Project,
@@ -97,15 +97,22 @@ func (c *Client) Status(ctx context.Context, name string) (client.Status, error)
 		if ok {
 			googleAPIError, ok := apiError.Unwrap().(*googleapi.Error)
 			if ok && googleAPIError.Code == 404 {
-				return client.StatusNotFound, nil
+				return nil, nil
 			}
 		}
 
+		return nil, err
+	}
+
+	return instance, nil
+}
+
+func (c *Client) Status(ctx context.Context, name string) (client.Status, error) {
+	instance, err := c.Get(ctx, name)
+	if err != nil {
 		return client.StatusNotFound, err
 	} else if instance == nil {
 		return client.StatusNotFound, nil
-	} else if instance.Status == nil {
-		return client.StatusBusy, nil
 	}
 
 	status := strings.TrimSpace(strings.ToUpper(*instance.Status))

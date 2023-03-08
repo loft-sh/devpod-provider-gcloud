@@ -7,6 +7,7 @@ import (
 	"github.com/loft-sh/devpod-gcloud-provider/pkg/gcloud"
 	"github.com/loft-sh/devpod-gcloud-provider/pkg/options"
 	"github.com/loft-sh/devpod-gcloud-provider/pkg/ptr"
+	"github.com/loft-sh/devpod-gcloud-provider/pkg/ssh"
 	"github.com/loft-sh/devpod/pkg/log"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -57,7 +58,22 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 		return nil, errors.Wrap(err, "parse disk size")
 	}
 
+	// generate ssh keys
+	publicKey, err := ssh.GetPublicKey(options.MachineFolder)
+	if err != nil {
+		return nil, errors.Wrap(err, "generate public key")
+	}
+
+	// generate instance object
 	instance := &computepb.Instance{
+		Metadata: &computepb.Metadata{
+			Items: []*computepb.Items{
+				{
+					Key:   ptr.Ptr("ssh-keys"),
+					Value: ptr.Ptr(":" + publicKey),
+				},
+			},
+		},
 		MachineType: ptr.Ptr(fmt.Sprintf("projects/%s/zones/%s/machineTypes/%s", options.Project, options.Zone, options.MachineType)),
 		Disks: []*computepb.AttachedDisk{
 			{

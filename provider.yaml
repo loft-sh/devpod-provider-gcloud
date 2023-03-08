@@ -23,10 +23,6 @@ options:
   INACTIVITY_TIMEOUT:
     description: If defined, will automatically stop the VM after the inactivity period.
     default: 10m
-  GCLOUD_TOKEN:
-    hidden: true
-    cache: 10m
-    command: ${GCLOUD_BINARY} auth application-default print-access-token --quiet --verbosity=error
   INJECT_GIT_CREDENTIALS:
     description: "If DevPod should inject git credentials into the remote host."
     default: "true"
@@ -43,16 +39,8 @@ agent:
   injectDockerCredentials: ${INJECT_DOCKER_CREDENTIALS}
   exec:
     shutdown: |-
-      ${DEVPOD} helper http request -X POST \
-                                    -H "Authorization: Bearer ${GCLOUD_TOKEN}" \
-                                    https://compute.googleapis.com/compute/v1/projects/${PROJECT}/zones/${ZONE}/instances/devpod-${MACHINE_ID}/stop
+      shutdown -n now
 exec:
-  init: |-
-    if ! command -v ${GCLOUD_BINARY} &> /dev/null; then
-        echo "${GCLOUD_BINARY} command couldn't be found. Please make sure to install the gcloud CLI locally"
-        echo "Take a look at https://cloud.google.com/sdk/docs/install-sdk for more information"
-        exit 1
-    fi
   command: ${DEVPOD} provider call gcloud command
   create: ${DEVPOD} provider call gcloud create
   delete: ${DEVPOD} provider call gcloud delete
