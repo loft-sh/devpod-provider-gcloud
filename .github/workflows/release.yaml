@@ -26,7 +26,6 @@ jobs:
         env:
           RELEASE_VERSION: ${{ steps.get_version.outputs.release_version }}
       - name: Save release assets
-        uses: actions/upload-artifact@v1
+        uses: softprops/action-gh-release@v1
         with:
-          name: release-assets
-          path: release/
+          files: release/*
