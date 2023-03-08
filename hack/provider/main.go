@@ -10,11 +10,11 @@ import (
 )
 
 var checksumMap = map[string]string{
-	"./release/devpod-gcloud-provider-linux-amd64":       "##CHECKSUM_LINUX_AMD64",
-	"./release/devpod-gcloud-provider-linux-arm64":       "##CHECKSUM_LINUX_ARM64",
-	"./release/devpod-gcloud-provider-darwin-amd64":      "##CHECKSUM_DARWIN_AMD64",
-	"./release/devpod-gcloud-provider-darwin-arm64":      "##CHECKSUM_DARWIN_ARM64",
-	"./release/devpod-gcloud-provider-windows-amd64.exe": "##CHECKSUM_WINDOWS_AMD64",
+	"./release/devpod-gcloud-provider-linux-amd64":       "##CHECKSUM_LINUX_AMD64##",
+	"./release/devpod-gcloud-provider-linux-arm64":       "##CHECKSUM_LINUX_ARM64##",
+	"./release/devpod-gcloud-provider-darwin-amd64":      "##CHECKSUM_DARWIN_AMD64##",
+	"./release/devpod-gcloud-provider-darwin-arm64":      "##CHECKSUM_DARWIN_ARM64##",
+	"./release/devpod-gcloud-provider-windows-amd64.exe": "##CHECKSUM_WINDOWS_AMD64##",
 }
 
 func main() {
