@@ -70,7 +70,7 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 			Items: []*computepb.Items{
 				{
 					Key:   ptr.Ptr("ssh-keys"),
-					Value: ptr.Ptr(":" + publicKey),
+					Value: ptr.Ptr("devpod:" + publicKey),
 				},
 			},
 		},

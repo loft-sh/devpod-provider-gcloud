@@ -35,6 +35,7 @@ func NewClient(addr string, keyBytes []byte) (*ssh.Client, error) {
 func ConfigFromKeyBytes(keyBytes []byte) (*ssh.ClientConfig, error) {
 	clientConfig := &ssh.ClientConfig{
 		Auth:            []ssh.AuthMethod{},
+		User:            "devpod",
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 

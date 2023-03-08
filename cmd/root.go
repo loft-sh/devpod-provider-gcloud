@@ -11,8 +11,10 @@ import (
 // NewRootCmd returns a new root command
 func NewRootCmd() *cobra.Command {
 	gcloudCmd := &cobra.Command{
-		Use:   "devpod-provider-gcloud",
-		Short: "gcloud Provider commands",
+		Use:           "devpod-provider-gcloud",
+		Short:         "gcloud Provider commands",
+		SilenceErrors: true,
+		SilenceUsage:  true,
 
 		PersistentPreRunE: func(cobraCmd *cobra.Command, args []string) error {
 			log2.Default.MakeRaw()
@@ -42,7 +44,7 @@ func Execute() {
 			os.Exit(exitErr.ExitCode())
 		}
 
-		os.Exit(1)
+		log2.Default.Fatal(err)
 	}
 }
 
