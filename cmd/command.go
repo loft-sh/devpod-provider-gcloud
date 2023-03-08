@@ -3,9 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/loft-sh/devpod-gcloud-provider/pkg/gcloud"
-	"github.com/loft-sh/devpod-gcloud-provider/pkg/options"
-	"github.com/loft-sh/devpod-gcloud-provider/pkg/ssh"
+	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
+	"github.com/loft-sh/devpod-provider-gcloud/pkg/options"
+	"github.com/loft-sh/devpod-provider-gcloud/pkg/ssh"
 	"github.com/loft-sh/devpod/pkg/log"
 	devssh "github.com/loft-sh/devpod/pkg/ssh"
 	"github.com/pkg/errors"

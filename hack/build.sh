@@ -42,7 +42,7 @@ mkdir -p "${PROVIDER_ROOT}/release"
 
 for OS in ${PROVIDER_BUILD_PLATFORMS[@]}; do
   for ARCH in ${PROVIDER_BUILD_ARCHS[@]}; do
-    NAME="devpod-gcloud-provider-${OS}-${ARCH}"
+    NAME="devpod-provider-gcloud-${OS}-${ARCH}"
     if [[ "${OS}" == "windows" ]]; then
       NAME="${NAME}.exe"
     fi

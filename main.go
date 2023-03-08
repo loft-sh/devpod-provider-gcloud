@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/loft-sh/devpod-gcloud-provider/cmd"
+	"github.com/loft-sh/devpod-provider-gcloud/cmd"
 )
 
 func main() {

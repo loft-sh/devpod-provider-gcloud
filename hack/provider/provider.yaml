@@ -44,23 +44,23 @@ binaries:
   GCLOUD_PROVIDER:
     - os: linux
       arch: amd64
-      path: https://github.com/loft-sh/devpod-gcloud-provider/releases/download/##VERSION##/devpod-gcloud-provider-linux-amd64
+      path: https://github.com/loft-sh/devpod-provider-gcloud/releases/download/##VERSION##/devpod-provider-gcloud-linux-amd64
       checksum: ##CHECKSUM_LINUX_AMD64##
     - os: linux
       arch: arm64
-      path: https://github.com/loft-sh/devpod-gcloud-provider/releases/download/##VERSION##/devpod-gcloud-provider-linux-arm64
+      path: https://github.com/loft-sh/devpod-provider-gcloud/releases/download/##VERSION##/devpod-provider-gcloud-linux-arm64
       checksum: ##CHECKSUM_LINUX_ARM64##
     - os: darwin
       arch: amd64
-      path: https://github.com/loft-sh/devpod-gcloud-provider/releases/download/##VERSION##/devpod-gcloud-provider-darwin-amd64
+      path: https://github.com/loft-sh/devpod-provider-gcloud/releases/download/##VERSION##/devpod-provider-gcloud-darwin-amd64
       checksum: ##CHECKSUM_DARWIN_AMD64##
     - os: darwin
       arch: arm64
-      path: https://github.com/loft-sh/devpod-gcloud-provider/releases/download/##VERSION##/devpod-gcloud-provider-darwin-arm64
+      path: https://github.com/loft-sh/devpod-provider-gcloud/releases/download/##VERSION##/devpod-provider-gcloud-darwin-arm64
       checksum: ##CHECKSUM_DARWIN_ARM64##
     - os: windows
       arch: amd64
-      path: https://github.com/loft-sh/devpod-gcloud-provider/releases/download/##VERSION##/devpod-gcloud-provider-windows-amd64.exe
+      path: https://github.com/loft-sh/devpod-provider-gcloud/releases/download/##VERSION##/devpod-provider-gcloud-windows-amd64.exe
       checksum: ##CHECKSUM_WINDOWS_AMD64##
 exec:
   command: ${GCLOUD_PROVIDER} command

@@ -1,4 +1,4 @@
-module github.com/loft-sh/devpod-gcloud-provider
+module github.com/loft-sh/devpod-provider-gcloud
 
 go 1.19
 

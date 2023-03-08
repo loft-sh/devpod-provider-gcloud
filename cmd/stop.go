@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"context"
-	"github.com/loft-sh/devpod-gcloud-provider/pkg/gcloud"
-	"github.com/loft-sh/devpod-gcloud-provider/pkg/options"
+	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
+	"github.com/loft-sh/devpod-provider-gcloud/pkg/options"
 	"github.com/loft-sh/devpod/pkg/log"
 	"github.com/spf13/cobra"
 )
