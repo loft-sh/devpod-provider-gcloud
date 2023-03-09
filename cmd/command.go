@@ -3,14 +3,14 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/options"
-	"github.com/loft-sh/devpod-provider-gcloud/pkg/ssh"
 	"github.com/loft-sh/devpod/pkg/log"
-	devssh "github.com/loft-sh/devpod/pkg/ssh"
+	"github.com/loft-sh/devpod/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 // CommandCmd holds the cmd flags
@@ -43,9 +43,9 @@ func (cmd *CommandCmd) Run(ctx context.Context, options *options.Options, log lo
 	}
 
 	// get private key
-	privateKey, err := ssh.GetPrivateKey(options.MachineFolder)
+	privateKey, err := ssh.GetPrivateKeyRawBase(options.MachineFolder)
 	if err != nil {
-		return fmt.Errorf("load private key: %v", err)
+		return fmt.Errorf("load private key: %w", err)
 	}
 
 	// create gcloud client
@@ -70,12 +70,12 @@ func (cmd *CommandCmd) Run(ctx context.Context, options *options.Options, log lo
 
 	// get external address
 	externalIP := *instance.NetworkInterfaces[0].AccessConfigs[0].NatIP
-	sshClient, err := ssh.NewClient(externalIP+":22", []byte(privateKey))
+	sshClient, err := ssh.NewSSHClient("devpod", externalIP+":22", privateKey)
 	if err != nil {
 		return errors.Wrap(err, "create ssh client")
 	}
 	defer sshClient.Close()
 
 	// run command
-	return devssh.Run(sshClient, command, os.Stdin, os.Stdout, os.Stderr)
+	return ssh.Run(sshClient, command, os.Stdin, os.Stdout, os.Stderr)
 }

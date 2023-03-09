@@ -1,17 +1,19 @@
 package cmd
 
 import (
-	"cloud.google.com/go/compute/apiv1/computepb"
 	"context"
+	"encoding/base64"
 	"fmt"
+	"strconv"
+
+	"cloud.google.com/go/compute/apiv1/computepb"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/options"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/ptr"
-	"github.com/loft-sh/devpod-provider-gcloud/pkg/ssh"
 	"github.com/loft-sh/devpod/pkg/log"
+	"github.com/loft-sh/devpod/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"strconv"
 )
 
 // CreateCmd holds the cmd flags
@@ -59,9 +61,14 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 	}
 
 	// generate ssh keys
-	publicKey, err := ssh.GetPublicKey(options.MachineFolder)
+	publicKeyBase, err := ssh.GetPublicKeyBase(options.MachineFolder)
 	if err != nil {
 		return nil, errors.Wrap(err, "generate public key")
+	}
+
+	publicKey, err := base64.StdEncoding.DecodeString(publicKeyBase)
+	if err != nil {
+		return nil, err
 	}
 
 	// generate instance object
@@ -70,7 +77,7 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 			Items: []*computepb.Items{
 				{
 					Key:   ptr.Ptr("ssh-keys"),
-					Value: ptr.Ptr("devpod:" + publicKey),
+					Value: ptr.Ptr("devpod:" + string(publicKey)),
 				},
 			},
 		},
