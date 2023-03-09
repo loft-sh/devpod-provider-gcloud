@@ -55,7 +55,7 @@ for OS in ${PROVIDER_BUILD_PLATFORMS[@]}; do
     echo "Building for ${OS}/${ARCH}"
     GOARCH=${ARCH} GOOS=${OS} ${GO_BUILD_CMD} -ldflags "${GO_BUILD_LDFLAGS}"\
       -o "${PROVIDER_ROOT}/release/${NAME}" main.go
-    sha256sum "${PROVIDER_ROOT}/release/${NAME}" | cut -d ' ' -f 1 > "${PROVIDER_ROOT}/release/${NAME}".sha256
+    shasum -a 256 "${PROVIDER_ROOT}/release/${NAME}" | cut -d ' ' -f 1 > "${PROVIDER_ROOT}/release/${NAME}".sha256
   done
 done
 
