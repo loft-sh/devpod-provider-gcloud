@@ -4,15 +4,20 @@ import (
 	compute "cloud.google.com/go/compute/apiv1"
 	computepb "cloud.google.com/go/compute/apiv1/computepb"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/googleapis/gax-go/v2/apierror"
 	"github.com/loft-sh/devpod/pkg/client"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"google.golang.org/api/googleapi"
+	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 	"strings"
 )
 
-func NewClient(ctx context.Context, project, zone string) (*Client, error) {
-	instanceClient, err := compute.NewInstancesRESTClient(ctx)
+func NewClient(ctx context.Context, project, zone string, opts ...option.ClientOption) (*Client, error) {
+	instanceClient, err := compute.NewInstancesRESTClient(ctx, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -29,6 +34,46 @@ type Client struct {
 
 	Project string
 	Zone    string
+}
+
+func DefaultTokenSource(ctx context.Context) (oauth2.TokenSource, error) {
+	return google.DefaultTokenSource(ctx, compute.DefaultAuthScopes()...)
+}
+
+func ParseToken(tok string) (oauth2.TokenSource, error) {
+	oauthToken := &oauth2.Token{}
+	err := json.Unmarshal([]byte(tok), oauthToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return &token{tok: oauthToken}, nil
+}
+
+func (c *Client) GetToken(ctx context.Context) ([]byte, error) {
+	tokSource, err := DefaultTokenSource(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := tokSource.Token()
+	if err != nil {
+		return nil, err
+	}
+
+	return json.Marshal(t)
+}
+
+func (c *Client) Init(ctx context.Context) error {
+	_, err := c.InstanceClient.List(ctx, &computepb.ListInstancesRequest{
+		Project: c.Project,
+		Zone:    c.Zone,
+	}).Next()
+	if err != nil && err != iterator.Done {
+		return fmt.Errorf("cannot list instances: %v", err)
+	}
+
+	return nil
 }
 
 func (c *Client) Create(ctx context.Context, instance *computepb.Instance) error {
@@ -134,4 +179,12 @@ func (c *Client) Close() error {
 	}
 
 	return nil
+}
+
+type token struct {
+	tok *oauth2.Token
+}
+
+func (t *token) Token() (*oauth2.Token, error) {
+	return t.tok, nil
 }

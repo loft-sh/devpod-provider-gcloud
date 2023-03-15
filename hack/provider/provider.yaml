@@ -32,14 +32,31 @@ options:
   AGENT_PATH:
     description: The path where to inject the DevPod agent to.
     default: /var/lib/toolbox/devpod
+  GCLOUD_PROVIDER_TOKEN:
+    local: true
+    hidden: true
+    cache: 5m
+    description: "The Google Cloud auth token to use"
+    command: |-
+      ${GCLOUD_PROVIDER} token
 agent:
   path: ${AGENT_PATH}
   inactivityTimeout: ${INACTIVITY_TIMEOUT}
   injectGitCredentials: ${INJECT_GIT_CREDENTIALS}
   injectDockerCredentials: ${INJECT_DOCKER_CREDENTIALS}
+  binaries:
+    GCLOUD_PROVIDER:
+      - os: linux
+        arch: amd64
+        path: https://github.com/loft-sh/devpod-provider-gcloud/releases/download/##VERSION##/devpod-provider-gcloud-linux-amd64
+        checksum: ##CHECKSUM_LINUX_AMD64##
+      - os: linux
+        arch: arm64
+        path: https://github.com/loft-sh/devpod-provider-gcloud/releases/download/##VERSION##/devpod-provider-gcloud-linux-arm64
+        checksum: ##CHECKSUM_LINUX_ARM64##
   exec:
     shutdown: |-
-      shutdown -n now
+      ${GCLOUD_PROVIDER} stop
 binaries:
   GCLOUD_PROVIDER:
     - os: linux
@@ -63,6 +80,7 @@ binaries:
       path: https://github.com/loft-sh/devpod-provider-gcloud/releases/download/##VERSION##/devpod-provider-gcloud-windows-amd64.exe
       checksum: ##CHECKSUM_WINDOWS_AMD64##
 exec:
+  init: ${GCLOUD_PROVIDER} init
   command: ${GCLOUD_PROVIDER} command
   create: ${GCLOUD_PROVIDER} create
   delete: ${GCLOUD_PROVIDER} delete
