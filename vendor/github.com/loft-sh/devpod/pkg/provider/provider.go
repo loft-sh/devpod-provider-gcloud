@@ -15,6 +15,9 @@ type ProviderConfig struct {
 	// Version is the provider version
 	Version string `json:"version,omitempty"`
 
+	// Source is the source the provider was loaded from
+	Source ProviderSource `json:"source,omitempty"`
+
 	// Type defines the type of the provider. Defaults to Server
 	Type ProviderType `json:"type,omitempty"`
 
@@ -34,9 +37,23 @@ type ProviderConfig struct {
 	Binaries map[string][]*ProviderBinary `json:"binaries,omitempty"`
 }
 
+type ProviderSource struct {
+	// Github source for the provider
+	Github string `json:"github,omitempty"`
+
+	// File source for the provider
+	File string `json:"file,omitempty"`
+
+	// URL where the provider was downloaded from
+	URL string `json:"url,omitempty"`
+}
+
 type ProviderAgentConfig struct {
-	// Path is the path inside the server devpod will expect the agent
+	// Path is the binary path inside the server devpod will expect the agent binary
 	Path string `json:"path,omitempty"`
+
+	// DataPath is the agent path where data is stored
+	DataPath string `json:"dataPath,omitempty"`
 
 	// DownloadURL is the base url where to download the agent from
 	DownloadURL string `json:"downloadURL,omitempty"`
@@ -97,9 +114,6 @@ type ProviderCommands struct {
 	// Init is run directly after `devpod use provider`
 	Init types.StrArray `json:"init,omitempty"`
 
-	// Validate is run directly after init and after the variables have been resolved.
-	Validate types.StrArray `json:"validate,omitempty"`
-
 	// Command executes a command on the server
 	Command types.StrArray `json:"command,omitempty"`
 
@@ -126,6 +140,9 @@ type ProviderOption struct {
 	// If required is true and the user doesn't supply a value, devpod will ask the user
 	Required bool `json:"required,omitempty"`
 
+	// If true, will not show the value to the user
+	Password bool `json:"password,omitempty"`
+
 	// ValidationPattern is a regex pattern to validate the value
 	ValidationPattern string `json:"validationPattern,omitempty"`
 
@@ -138,7 +155,7 @@ type ProviderOption struct {
 	// Hidden specifies if the option should be hidden
 	Hidden bool `json:"hidden,omitempty"`
 
-	// Local will never send the option to the server
+	// Local means the variable is not resolved immediately and instead later when the workspace / machine was created.
 	Local bool `json:"local,omitempty"`
 
 	// Global means the variable is stored globally. By default, option values will be
