@@ -16,21 +16,24 @@ type Options struct {
 	MachineType string
 }
 
-func FromEnv() (*Options, error) {
+func FromEnv(withMachine bool) (*Options, error) {
 	retOptions := &Options{}
 
 	var err error
-	retOptions.MachineID, err = fromEnvOrError("MACHINE_ID")
-	if err != nil {
-		return nil, err
-	}
-	// prefix with devpod-
-	retOptions.MachineID = "devpod-" + retOptions.MachineID
+	if withMachine {
+		retOptions.MachineID, err = fromEnvOrError("MACHINE_ID")
+		if err != nil {
+			return nil, err
+		}
+		// prefix with devpod-
+		retOptions.MachineID = "devpod-" + retOptions.MachineID
 
-	retOptions.MachineFolder, err = fromEnvOrError("MACHINE_FOLDER")
-	if err != nil {
-		return nil, err
+		retOptions.MachineFolder, err = fromEnvOrError("MACHINE_FOLDER")
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	retOptions.Project, err = fromEnvOrError("PROJECT")
 	if err != nil {
 		return nil, err

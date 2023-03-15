@@ -50,7 +50,7 @@ func ParseToken(tok string) (oauth2.TokenSource, error) {
 	return &token{tok: oauthToken}, nil
 }
 
-func (c *Client) GetToken(ctx context.Context) ([]byte, error) {
+func GetToken(ctx context.Context) ([]byte, error) {
 	tokSource, err := DefaultTokenSource(ctx)
 	if err != nil {
 		return nil, err

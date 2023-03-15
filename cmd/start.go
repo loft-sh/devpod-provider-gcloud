@@ -18,7 +18,7 @@ func NewStartCmd() *cobra.Command {
 		Use:   "start",
 		Short: "Start an instance",
 		RunE: func(_ *cobra.Command, args []string) error {
-			options, err := options.FromEnv()
+			options, err := options.FromEnv(true)
 			if err != nil {
 				return err
 			}
