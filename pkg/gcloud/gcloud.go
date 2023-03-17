@@ -37,17 +37,17 @@ type Client struct {
 }
 
 func DefaultTokenSource(ctx context.Context) (oauth2.TokenSource, error) {
-	return google.DefaultTokenSource(ctx, compute.DefaultAuthScopes()...)
+	return google.DefaultTokenSource(ctx)
 }
 
-func ParseToken(tok string) (oauth2.TokenSource, error) {
+func ParseToken(tok string) (*oauth2.Token, error) {
 	oauthToken := &oauth2.Token{}
 	err := json.Unmarshal([]byte(tok), oauthToken)
 	if err != nil {
 		return nil, err
 	}
 
-	return &token{tok: oauthToken}, nil
+	return oauthToken, nil
 }
 
 func GetToken(ctx context.Context) ([]byte, error) {
@@ -61,6 +61,8 @@ func GetToken(ctx context.Context) ([]byte, error) {
 		return nil, err
 	}
 
+	t.RefreshToken = ""
+	t.TokenType = ""
 	return json.Marshal(t)
 }
 
@@ -179,12 +181,4 @@ func (c *Client) Close() error {
 	}
 
 	return nil
-}
-
-type token struct {
-	tok *oauth2.Token
-}
-
-func (t *token) Token() (*oauth2.Token, error) {
-	return t.tok, nil
 }

@@ -2,17 +2,22 @@ package cmd
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/options"
 	"github.com/loft-sh/devpod/pkg/log"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"google.golang.org/api/option"
+	"io"
+	"net/http"
 	"os"
 )
 
 // StopCmd holds the cmd flags
-type StopCmd struct{}
+type StopCmd struct {
+	Raw bool
+}
 
 // NewStopCmd defines a command
 func NewStopCmd() *cobra.Command {
@@ -30,17 +35,17 @@ func NewStopCmd() *cobra.Command {
 		},
 	}
 
+	stopCmd.Flags().BoolVar(&cmd.Raw, "raw", false, "If enabled will sent a raw request instead of using the SDK")
 	return stopCmd
 }
 
 // Run runs the command logic
 func (cmd *StopCmd) Run(ctx context.Context, options *options.Options, log log.Logger) error {
-	clientOptions, err := getGCloudCredentials(ctx)
-	if err != nil {
-		return err
+	if cmd.Raw {
+		return rawStop(ctx, options)
 	}
 
-	client, err := gcloud.NewClient(ctx, options.Project, options.Zone, clientOptions...)
+	client, err := gcloud.NewClient(ctx, options.Project, options.Zone)
 	if err != nil {
 		return err
 	}
@@ -49,19 +54,40 @@ func (cmd *StopCmd) Run(ctx context.Context, options *options.Options, log log.L
 	return client.Stop(ctx, options.MachineID, true)
 }
 
-func getGCloudCredentials(ctx context.Context) ([]option.ClientOption, error) {
-	source, err := gcloud.DefaultTokenSource(ctx)
-	if err != nil {
-		providerToken := os.Getenv("GCLOUD_PROVIDER_TOKEN")
-		if providerToken == "" {
-			return nil, fmt.Errorf("couldn't find gcloud credentials")
-		}
-
-		source, err = gcloud.ParseToken(providerToken)
-		if err != nil {
-			return nil, err
-		}
+func rawStop(ctx context.Context, options *options.Options) error {
+	providerToken := os.Getenv("GCLOUD_PROVIDER_TOKEN")
+	if providerToken == "" {
+		return fmt.Errorf("couldn't find gcloud credentials")
 	}
 
-	return []option.ClientOption{option.WithTokenSource(source)}, nil
+	tok, err := gcloud.ParseToken(providerToken)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", fmt.Sprintf("https://compute.googleapis.com/compute/v1/projects/%s/zones/%s/instances/%s/stop", options.Project, options.Zone, options.MachineID), nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", "Bearer "+tok.AccessToken)
+
+	client := &http.Client{Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode >= 400 {
+		out, err := io.ReadAll(resp.Body)
+		if err == nil {
+			return errors.Wrapf(err, "Error stopping vm: %s", string(out))
+		}
+
+		return err
+	}
+
+	return nil
 }
