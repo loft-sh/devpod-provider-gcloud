@@ -5,18 +5,16 @@ description: |-
 icon: https://www.vectorlogo.zone/logos/google_cloud/google_cloud-ar21.svg
 optionGroups:
   - options:
+      - DISK_SIZE
+      - DISK_IMAGE
+      - MACHINE_TYPE
+    name: "GCloud options"
+  - options:
       - AGENT_PATH
       - INACTIVITY_TIMEOUT
       - INJECT_DOCKER_CREDENTIALS
       - INJECT_GIT_CREDENTIALS
     name: "Agent options"
-    defaultVisible: false
-  - options:
-      - DISK_SIZE
-      - DISK_IMAGE
-      - MACHINE_TYPE
-    name: "GCloud options"
-    defaultVisible: true
 options:
   PROJECT:
     description: The project id to use.
