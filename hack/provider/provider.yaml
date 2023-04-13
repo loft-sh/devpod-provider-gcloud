@@ -5,16 +5,18 @@ description: |-
 icon: https://www.vectorlogo.zone/logos/google_cloud/google_cloud-ar21.svg
 optionGroups:
   - options:
-      - MACHINE_TYPE
+      - AGENT_PATH
+      - INACTIVITY_TIMEOUT
+      - INJECT_DOCKER_CREDENTIALS
+      - INJECT_GIT_CREDENTIALS
+    name: "Agent options"
+    defaultVisible: false
+  - options:
       - DISK_SIZE
       - DISK_IMAGE
-    name: "Google Cloud Options"
-  - options:
-      - INACTIVITY_TIMEOUT
-      - INJECT_GIT_CREDENTIALS
-      - INJECT_DOCKER_CREDENTIALS
-      - AGENT_PATH
-    name: "Agent Options"
+      - MACHINE_TYPE
+    name: "GCloud options"
+    defaultVisible: true
 options:
   PROJECT:
     description: The project id to use.
@@ -23,6 +25,7 @@ options:
   ZONE:
     description: The google cloud zone to create the VM in. E.g. europe-west1-d
     required: true
+<<<<<<< HEAD
     command: gcloud config list --quiet --verbosity=error --format "value(compute.zone)" 2>/dev/null || true
     suggestions:
       - asia-east1-a
@@ -98,6 +101,34 @@ options:
       - us-west4-a
       - us-west4-b
       - us-west4-c
+=======
+    command: gcloud config list --quiet --verbosity=error --format "value(compute.zone)" || true
+    suggestions:
+      - us-west1
+      - us-west2
+      - us-west3
+      - us-west4
+      - us-central1
+      - us-east1
+      - us-east4
+      - northamerica-northeast1
+      - southamerica-east1
+      - europe-west2
+      - europe-west1
+      - europe-west4
+      - europe-west6
+      - europe-west3
+      - europe-north1
+      - asia-south1
+      - asia-southeast1
+      - asia-southeast2
+      - asia-east2
+      - asia-east1
+      - asia-northeast1
+      - asia-northeast2
+      - australia-southeast1
+      - asia-northeast3
+>>>>>>> 25bbd7d (update provider with suggestions)
   DISK_SIZE:
     description: The disk size to use.
     default: "40"
