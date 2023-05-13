@@ -2,7 +2,7 @@ name: gcloud
 version: ##VERSION##
 description: |-
   DevPod on Google Cloud
-icon: https://www.vectorlogo.zone/logos/google_cloud/google_cloud-ar21.svg
+icon: https://devpod.sh/assets/gcp.svg
 optionGroups:
   - options:
       - DISK_SIZE
