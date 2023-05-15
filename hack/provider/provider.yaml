@@ -23,7 +23,7 @@ options:
   ZONE:
     description: The google cloud zone to create the VM in. E.g. europe-west1-d
     required: true
-    command: gcloud config list --quiet --verbosity=error --format "value(compute.zone)" 2>/dev/null || true
+    command: gcloud config list --quiet --verbosity=error --format "value(compute.zone)" 2>/dev/null || echo "europe-west2-b"
     suggestions:
       - asia-east1-a
       - asia-east1-b
