@@ -11,6 +11,9 @@ type Options struct {
 
 	Project     string
 	Zone        string
+	Network     string
+	Subnetwork  string
+	Tag         string
 	DiskSize    string
 	DiskImage   string
 	MachineType string
@@ -54,6 +57,10 @@ func FromEnv(withMachine bool) (*Options, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	retOptions.Network = os.Getenv("NETWORK")
+	retOptions.Subnetwork = os.Getenv("SUBNETWORK")
+	retOptions.Tag = os.Getenv("TAG")
 
 	return retOptions, nil
 }

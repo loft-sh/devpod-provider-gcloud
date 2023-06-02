@@ -1,12 +1,10 @@
 package cmd
 
 import (
+	"cloud.google.com/go/compute/apiv1/computepb"
 	"context"
 	"encoding/base64"
 	"fmt"
-	"strconv"
-
-	"cloud.google.com/go/compute/apiv1/computepb"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/options"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/ptr"
@@ -14,6 +12,9 @@ import (
 	"github.com/loft-sh/devpod/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"regexp"
+	"strconv"
+	"strings"
 )
 
 // CreateCmd holds the cmd flags
@@ -94,8 +95,11 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 				},
 			},
 		},
+		Tags: buildInstanceTags(options),
 		NetworkInterfaces: []*computepb.NetworkInterface{
 			{
+				Network:    normalizeNetworkID(options),
+				Subnetwork: normalizeSubnetworkID(options),
 				AccessConfigs: []*computepb.AccessConfig{
 					{
 						Name:        ptr.Ptr("External NAT"),
@@ -109,4 +113,67 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 	}
 
 	return instance, nil
+}
+
+func buildInstanceTags(options *options.Options) *computepb.Tags {
+	if len(options.Tag) == 0 {
+		return nil
+	}
+
+	return &computepb.Tags{Items: []string{options.Tag}}
+}
+
+func normalizeNetworkID(options *options.Options) *string {
+	network := options.Network
+	project := options.Project
+
+	if len(network) == 0 {
+		return nil
+	}
+
+	// projects/{{project}}/regions/{{region}}/subnetworks/{{name}}
+	if regexp.MustCompile("projects/([^/]+)/global/networks/([^/]+)").MatchString(network) {
+		return ptr.Ptr(network)
+	}
+
+	// {{project}}/{{name}}
+	if regexp.MustCompile("([^/]+)/([^/]+)").MatchString(network) {
+		s := strings.Split(network, "/")
+		return ptr.Ptr(fmt.Sprintf("projects/%s/global/networks/%s", s[0], s[1]))
+	}
+
+	// {{name}}
+	return ptr.Ptr(fmt.Sprintf("projects/%s/global/networks/%s", project, network))
+}
+
+func normalizeSubnetworkID(options *options.Options) *string {
+	sn := strings.TrimSpace(options.Subnetwork)
+
+	if len(sn) == 0 {
+		return nil
+	}
+
+	project := options.Project
+	zone := options.Zone
+	region := zone[:strings.LastIndex(zone, "-")]
+
+	// projects/{{project}}/regions/{{region}}/subnetworks/{{name}}
+	if regexp.MustCompile("projects/([^/]+)/regions/([^/]+)/subnetworks/([^/]+)").MatchString(sn) {
+		return ptr.Ptr(sn)
+	}
+
+	// {{project}}/{{region}}/{{name}}
+	if regexp.MustCompile("([^/]+)/([^/]+)/([^/]+)").MatchString(sn) {
+		s := strings.Split(sn, "/")
+		return ptr.Ptr(fmt.Sprintf("projects/%s/regions/%s/subnetworks/%s", s[0], s[1], s[2]))
+	}
+
+	// {{region}}/{{name}}
+	if regexp.MustCompile("([^/]+)/([^/]+)").MatchString(sn) {
+		s := strings.Split(sn, "/")
+		return ptr.Ptr(fmt.Sprintf("projects/%s/regions/%s/subnetworks/%s", project, s[0], s[1]))
+	}
+
+	// {{name}}
+	return ptr.Ptr(fmt.Sprintf("projects/%s/regions/%s/subnetworks/%s", project, region, sn))
 }
