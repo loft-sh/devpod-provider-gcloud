@@ -98,6 +98,13 @@ options:
       - us-west4-a
       - us-west4-b
       - us-west4-c
+  NETWORK:
+    description: The network id to use.
+  SUBNETWORK:
+    description: The subnetwork id to use.
+  TAG:
+    description: A tag to attach to the instance.
+    default: "devpod"
   DISK_SIZE:
     description: The disk size to use.
     default: "40"
