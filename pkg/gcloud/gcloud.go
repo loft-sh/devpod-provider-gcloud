@@ -1,11 +1,15 @@
 package gcloud
 
 import (
-	compute "cloud.google.com/go/compute/apiv1"
-	computepb "cloud.google.com/go/compute/apiv1/computepb"
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
+	compute "cloud.google.com/go/compute/apiv1"
+	computepb "cloud.google.com/go/compute/apiv1/computepb"
 	"github.com/googleapis/gax-go/v2/apierror"
 	"github.com/loft-sh/devpod/pkg/client"
 	"golang.org/x/oauth2"
@@ -13,10 +17,14 @@ import (
 	"google.golang.org/api/googleapi"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
-	"strings"
 )
 
 func NewClient(ctx context.Context, project, zone string, opts ...option.ClientOption) (*Client, error) {
+	err := SetupEnvJson(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	instanceClient, err := compute.NewInstancesRESTClient(ctx, opts...)
 	if err != nil {
 		return nil, err
@@ -34,6 +42,21 @@ type Client struct {
 
 	Project string
 	Zone    string
+}
+
+func SetupEnvJson(ctx context.Context) error {
+	if os.Getenv("GCLOUD_JSON_AUTH") != "" {
+		destination := filepath.Join(os.TempDir(), "gcloud_auth.json")
+
+		err := os.WriteFile(destination, []byte(os.Getenv("GCLOUD_JSON_AUTH")), 0o400)
+		if err != nil {
+			return err
+		}
+
+		return os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", destination)
+	}
+
+	return nil
 }
 
 func DefaultTokenSource(ctx context.Context) (oauth2.TokenSource, error) {
