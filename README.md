@@ -1,5 +1,7 @@
 # GCLOUD Provider for DevPod
 
+[![Join us on Slack!](docs/static/media/slack.svg)](https://slack.loft.sh/) [![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/loft-sh/devpod-provider-gcloud)
+
 ## Getting started
 
 The provider is available for auto-installation using 
