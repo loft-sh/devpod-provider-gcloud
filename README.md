@@ -46,6 +46,7 @@ This provides has the seguent options
 | NETWORK        | false    | The network id to use.                                         |                                                      |
 | SUBNETWORK     | false    | The subnetwork id to use.                                      |                                                      |
 | TAG            | false    | A tag to attach to the instance.                               | devpod                                               |
+| SERVICE_ACCOUNT| false    | A service account to attach to instance
 
 Options can either be set in `env` or using for example:
 

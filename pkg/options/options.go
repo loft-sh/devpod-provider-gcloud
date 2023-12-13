@@ -9,14 +9,15 @@ type Options struct {
 	MachineID     string
 	MachineFolder string
 
-	Project     string
-	Zone        string
-	Network     string
-	Subnetwork  string
-	Tag         string
-	DiskSize    string
-	DiskImage   string
-	MachineType string
+	Project        string
+	Zone           string
+	Network        string
+	Subnetwork     string
+	Tag            string
+	DiskSize       string
+	DiskImage      string
+	MachineType    string
+	ServiceAccount string
 }
 
 func FromEnv(withMachine bool) (*Options, error) {
@@ -54,6 +55,10 @@ func FromEnv(withMachine bool) (*Options, error) {
 		return nil, err
 	}
 	retOptions.MachineType, err = fromEnvOrError("MACHINE_TYPE")
+	if err != nil {
+		return nil, err
+	}
+	retOptions.ServiceAccount, err = fromEnvOrError("SERVICE_ACCOUNT")
 	if err != nil {
 		return nil, err
 	}

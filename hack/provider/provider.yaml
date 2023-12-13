@@ -111,6 +111,9 @@ options:
   DISK_IMAGE:
     description: The disk image to use.
     default: projects/cos-cloud/global/images/cos-101-17162-127-5
+  SERVICE_ACCOUNT:
+    description: A service account to attach
+    default: "none"
   MACHINE_TYPE:
     description: The machine type to use.
     default: c2-standard-4

@@ -1,10 +1,14 @@
 package cmd
 
 import (
-	"cloud.google.com/go/compute/apiv1/computepb"
 	"context"
 	"encoding/base64"
 	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
+
+	"cloud.google.com/go/compute/apiv1/computepb"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/options"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/ptr"
@@ -12,9 +16,6 @@ import (
 	"github.com/loft-sh/devpod/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"regexp"
-	"strconv"
-	"strings"
 )
 
 // CreateCmd holds the cmd flags
@@ -71,6 +72,18 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 	if err != nil {
 		return nil, err
 	}
+	serviceAccounts := []*computepb.ServiceAccount{}
+	if options.ServiceAccount != "none" {
+
+		serviceAccounts = []*computepb.ServiceAccount{
+			{
+				Email: &options.ServiceAccount,
+				Scopes: []string{
+					"https://www.googleapis.com/auth/cloud-platform",
+				},
+			},
+		}
+	}
 
 	// generate instance object
 	instance := &computepb.Instance{
@@ -108,8 +121,9 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 				},
 			},
 		},
-		Zone: ptr.Ptr(fmt.Sprintf("projects/%s/zones/%s", options.Project, options.Zone)),
-		Name: ptr.Ptr(options.MachineID),
+		Zone:            ptr.Ptr(fmt.Sprintf("projects/%s/zones/%s", options.Project, options.Zone)),
+		Name:            ptr.Ptr(options.MachineID),
+		ServiceAccounts: serviceAccounts,
 	}
 
 	return instance, nil
