@@ -60,7 +60,11 @@ func SetupEnvJson(ctx context.Context) error {
 }
 
 func DefaultTokenSource(ctx context.Context) (oauth2.TokenSource, error) {
-	return google.DefaultTokenSource(ctx)
+	scopes := []string{
+		"https://www.googleapis.com/auth/cloud-platform",
+	}
+
+	return google.DefaultTokenSource(ctx, scopes...)
 }
 
 func ParseToken(tok string) (*oauth2.Token, error) {
