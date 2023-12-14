@@ -74,6 +74,11 @@ func ParseToken(tok string) (*oauth2.Token, error) {
 }
 
 func GetToken(ctx context.Context) ([]byte, error) {
+	err := SetupEnvJson(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	tokSource, err := DefaultTokenSource(ctx)
 	if err != nil {
 		return nil, err
