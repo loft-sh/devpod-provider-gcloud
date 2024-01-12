@@ -58,11 +58,8 @@ func FromEnv(withMachine bool) (*Options, error) {
 	if err != nil {
 		return nil, err
 	}
-	retOptions.ServiceAccount, err = fromEnvOrError("SERVICE_ACCOUNT")
-	if err != nil {
-		return nil, err
-	}
 
+	retOptions.ServiceAccount = os.Getenv("SERVICE_ACCOUNT")
 	retOptions.Network = os.Getenv("NETWORK")
 	retOptions.Subnetwork = os.Getenv("SUBNETWORK")
 	retOptions.Tag = os.Getenv("TAG")

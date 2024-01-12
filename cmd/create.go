@@ -73,7 +73,7 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 		return nil, err
 	}
 	serviceAccounts := []*computepb.ServiceAccount{}
-	if options.ServiceAccount != "none" {
+	if options.ServiceAccount != "" {
 
 		serviceAccounts = []*computepb.ServiceAccount{
 			{
