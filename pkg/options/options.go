@@ -9,14 +9,15 @@ type Options struct {
 	MachineID     string
 	MachineFolder string
 
-	Project     string
-	Zone        string
-	Network     string
-	Subnetwork  string
-	Tag         string
-	DiskSize    string
-	DiskImage   string
-	MachineType string
+	Project        string
+	Zone           string
+	Network        string
+	Subnetwork     string
+	Tag            string
+	DiskSize       string
+	DiskImage      string
+	MachineType    string
+	ServiceAccount string
 }
 
 func FromEnv(withMachine bool) (*Options, error) {
@@ -58,6 +59,7 @@ func FromEnv(withMachine bool) (*Options, error) {
 		return nil, err
 	}
 
+	retOptions.ServiceAccount = os.Getenv("SERVICE_ACCOUNT")
 	retOptions.Network = os.Getenv("NETWORK")
 	retOptions.Subnetwork = os.Getenv("SUBNETWORK")
 	retOptions.Tag = os.Getenv("TAG")
