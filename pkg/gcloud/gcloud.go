@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -46,9 +47,19 @@ type Client struct {
 
 func SetupEnvJson(ctx context.Context) error {
 	if os.Getenv("GCLOUD_JSON_AUTH") != "" {
-		destination := filepath.Join(os.TempDir(), "gcloud_auth.json")
+		exePath, err := os.Executable()
+		if err != nil {
+			return err
+		}
+		destination := filepath.Join(path.Dir(exePath), "gcloud_auth.json")
 
-		err := os.WriteFile(destination, []byte(os.Getenv("GCLOUD_JSON_AUTH")), 0o400)
+		f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o400)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		_, err = f.WriteString(os.Getenv("GCLOUD_JSON_AUTH"))
 		if err != nil {
 			return err
 		}
