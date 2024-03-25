@@ -74,7 +74,6 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 	}
 	serviceAccounts := []*computepb.ServiceAccount{}
 	if options.ServiceAccount != "" {
-
 		serviceAccounts = []*computepb.ServiceAccount{
 			{
 				Email: &options.ServiceAccount,
@@ -87,6 +86,10 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 
 	// generate instance object
 	instance := &computepb.Instance{
+		Scheduling: &computepb.Scheduling{
+			AutomaticRestart:  ptr.Ptr(true),
+			OnHostMaintenance: ptr.Ptr(getMaintenancePolicy(options.MachineType)),
+		},
 		Metadata: &computepb.Metadata{
 			Items: []*computepb.Items{
 				{
@@ -190,4 +193,15 @@ func normalizeSubnetworkID(options *options.Options) *string {
 
 	// {{name}}
 	return ptr.Ptr(fmt.Sprintf("projects/%s/regions/%s/subnetworks/%s", project, region, sn))
+}
+
+func getMaintenancePolicy(machineType string) string {
+	gpuInstancePattern := `^[agn][0-9]`
+	re := regexp.MustCompile(gpuInstancePattern)
+
+	if re.MatchString(machineType) {
+		return "TERMINATE"
+	}
+
+	return "MIGRATE"
 }
