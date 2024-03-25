@@ -195,11 +195,10 @@ func normalizeSubnetworkID(options *options.Options) *string {
 	return ptr.Ptr(fmt.Sprintf("projects/%s/regions/%s/subnetworks/%s", project, region, sn))
 }
 
-func getMaintenancePolicy(machineType string) string {
-	gpuInstancePattern := `^[agn][0-9]`
-	re := regexp.MustCompile(gpuInstancePattern)
+var gpuInstancePattern *regexp.Regexp = regexp.MustCompile(`^[agn][0-9]`)
 
-	if re.MatchString(machineType) {
+func getMaintenancePolicy(machineType string) string {
+	if gpuInstancePattern.MatchString(machineType) {
 		return "TERMINATE"
 	}
 
