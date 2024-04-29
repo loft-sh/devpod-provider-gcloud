@@ -114,14 +114,9 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 		Tags: buildInstanceTags(options),
 		NetworkInterfaces: []*computepb.NetworkInterface{
 			{
-				Network:    normalizeNetworkID(options),
-				Subnetwork: normalizeSubnetworkID(options),
-				AccessConfigs: []*computepb.AccessConfig{
-					{
-						Name:        ptr.Ptr("External NAT"),
-						NetworkTier: ptr.Ptr("STANDARD"),
-					},
-				},
+				Network:       normalizeNetworkID(options),
+				Subnetwork:    normalizeSubnetworkID(options),
+				AccessConfigs: getAccessConfig(options),
 			},
 		},
 		Zone:            ptr.Ptr(fmt.Sprintf("projects/%s/zones/%s", options.Project, options.Zone)),
@@ -130,6 +125,19 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 	}
 
 	return instance, nil
+}
+
+func getAccessConfig(options *options.Options) []*computepb.AccessConfig {
+	if options.PublicIP {
+		return []*computepb.AccessConfig{
+			{
+				Name:        ptr.Ptr("External NAT"),
+				NetworkTier: ptr.Ptr("STANDARD"),
+			},
+		}
+	}
+
+	return nil
 }
 
 func buildInstanceTags(options *options.Options) *computepb.Tags {

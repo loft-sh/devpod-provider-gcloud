@@ -114,6 +114,9 @@ options:
   SERVICE_ACCOUNT:
     description: A service account to attach
     default: ""
+  PUBLIC_IP_ENABLED:
+    description: Use a public ip to access the instance
+    default: "true"
   MACHINE_TYPE:
     description: The machine type to use.
     default: c2-standard-4
