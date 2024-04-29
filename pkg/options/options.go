@@ -18,6 +18,7 @@ type Options struct {
 	DiskImage      string
 	MachineType    string
 	ServiceAccount string
+	PublicIP       bool
 }
 
 func FromEnv(withMachine bool) (*Options, error) {
@@ -58,6 +59,13 @@ func FromEnv(withMachine bool) (*Options, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	publicIp, err := fromEnvOrError("PUBLIC_IP_ENABLED")
+	if err != nil {
+		return nil, err
+	}
+
+	retOptions.PublicIP = publicIp == "true"
 
 	retOptions.ServiceAccount = os.Getenv("SERVICE_ACCOUNT")
 	retOptions.Network = os.Getenv("NETWORK")
