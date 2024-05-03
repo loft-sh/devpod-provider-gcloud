@@ -53,7 +53,7 @@ func SetupEnvJson(ctx context.Context) error {
 		}
 		destination := filepath.Join(path.Dir(exePath), "gcloud_auth.json")
 
-		f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o400)
+		f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o600)
 		if err != nil {
 			return err
 		}
