@@ -34,12 +34,12 @@ You'll need to wait for the machine and environment setup.
 
 ### Customize the VM Instance
 
-This provides has the seguent options
+This provides has the following options:
 
 | NAME           | REQUIRED | DESCRIPTION                                                    | DEFAULT                                              |
 |----------------|----------|----------------------------------------------------------------|------------------------------------------------------|
 | DISK_IMAGE     | false    | The disk image to use.                                         | projects/cos-cloud/global/images/cos-101-17162-127-5 |
-| DISK_SIZE      | false    | The disk size to use.                                          | 40                                                   |
+| DISK_SIZE      | false    | The disk size to use (GB).                                     | 40                                                   |
 | MACHINE_TYPE   | false    | The machine type to use.                                       | c2-standard-4                                        |
 | PROJECT        | true     | The project id to use.                                         |                                                      |
 | ZONE           | true     | The google cloud zone to create the VM in. E.g. europe-west1-d |                                                      |
