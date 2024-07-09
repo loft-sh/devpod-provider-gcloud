@@ -22,7 +22,7 @@ Be aware that authentication is obtained using `gcloud` CLI tool, take a look
 [here](https://developers.google.com/accounts/docs/application-default-credentials)
 for more info
 
-### Creating your first devpod env with gcloud
+### Creating your first devpod workspace with gcloud
 
 After the initial setup, just use:
 
@@ -30,7 +30,7 @@ After the initial setup, just use:
 devpod up .
 ```
 
-You'll need to wait for the machine and environment setup.
+You'll need to wait for the machine and workspace setup.
 
 ### Customize the VM Instance
 
