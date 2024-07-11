@@ -106,7 +106,7 @@ options:
     description: A tag to attach to the instance.
     default: "devpod"
   DISK_SIZE:
-    description: The disk size to use.
+    description: The disk size to use (GB).
     default: "40"
   DISK_IMAGE:
     description: The disk image to use.
