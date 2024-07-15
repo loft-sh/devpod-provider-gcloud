@@ -4,23 +4,27 @@
 
 ## Getting started
 
-The provider is available for auto-installation using 
+The provider is available for auto-installation using:
 
 ```sh
-devpod provider add gcloud
+devpod provider add gcloud -o PROJECT=<project id to use> -o ZONE=<Google Cloud zone to create the VMs in>
 devpod provider use gcloud
 ```
 
-Follow the on-screen instructions to complete the setup.
+Option `PROJECT` must be set when adding the provider
+(unless the project to be used is set as the current project in `gcloud`).
 
-Needed variables will be:
+Option `ZONE` should be set when adding the provider.
 
-- ZONE
-- PROJECT
+Options can be set using `devpod provider set-options`, for example:
+
+```sh
+devpod provider set-options gcloud -o DISK_IMAGE=my-custom-vm-image
+```
 
 Be aware that authentication is obtained using `gcloud` CLI tool, take a look
 [here](https://developers.google.com/accounts/docs/application-default-credentials)
-for more info
+for more information.
 
 ### Creating your first devpod workspace with gcloud
 
@@ -48,8 +52,4 @@ This provides has the following options:
 | TAG            | false    | A tag to attach to the instance.                               | devpod                                               |
 | SERVICE_ACCOUNT| false    | A service account to attach to instance
 
-Options can either be set in `env` or using for example:
 
-```sh
-devpod provider set-options -o DISK_IMAGE=my-custom-vm-image
-```
