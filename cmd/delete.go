@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/options"
 	"github.com/loft-sh/devpod/pkg/log"
@@ -18,7 +19,7 @@ func NewDeleteCmd() *cobra.Command {
 		Use:   "delete",
 		Short: "Delete an instance",
 		RunE: func(_ *cobra.Command, args []string) error {
-			options, err := options.FromEnv(true)
+			options, err := options.FromEnv(true, true)
 			if err != nil {
 				return err
 			}

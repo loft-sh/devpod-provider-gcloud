@@ -4,14 +4,15 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/options"
 	"github.com/loft-sh/devpod/pkg/log"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"io"
-	"net/http"
-	"os"
 )
 
 // StopCmd holds the cmd flags
@@ -26,7 +27,7 @@ func NewStopCmd() *cobra.Command {
 		Use:   "stop",
 		Short: "Stop an instance",
 		RunE: func(_ *cobra.Command, args []string) error {
-			options, err := options.FromEnv(true)
+			options, err := options.FromEnv(true, false)
 			if err != nil {
 				return err
 			}

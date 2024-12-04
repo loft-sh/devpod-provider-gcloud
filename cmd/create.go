@@ -28,7 +28,7 @@ func NewCreateCmd() *cobra.Command {
 		Use:   "create",
 		Short: "Create an instance",
 		RunE: func(_ *cobra.Command, args []string) error {
-			options, err := options.FromEnv(true)
+			options, err := options.FromEnv(true, true)
 			if err != nil {
 				return err
 			}
