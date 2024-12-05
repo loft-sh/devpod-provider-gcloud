@@ -3,11 +3,12 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/options"
 	"github.com/loft-sh/devpod/pkg/log"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 // StatusCmd holds the cmd flags
@@ -20,7 +21,7 @@ func NewStatusCmd() *cobra.Command {
 		Use:   "status",
 		Short: "Retrieve the status of an instance",
 		RunE: func(_ *cobra.Command, args []string) error {
-			options, err := options.FromEnv(true)
+			options, err := options.FromEnv(true, true)
 			if err != nil {
 				return err
 			}

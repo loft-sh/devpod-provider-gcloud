@@ -21,7 +21,7 @@ type Options struct {
 	PublicIP       bool
 }
 
-func FromEnv(withMachine bool) (*Options, error) {
+func FromEnv(withMachine, withFolder bool) (*Options, error) {
 	retOptions := &Options{}
 
 	var err error
@@ -32,7 +32,8 @@ func FromEnv(withMachine bool) (*Options, error) {
 		}
 		// prefix with devpod-
 		retOptions.MachineID = "devpod-" + retOptions.MachineID
-
+	}
+	if withFolder {
 		retOptions.MachineFolder, err = fromEnvOrError("MACHINE_FOLDER")
 		if err != nil {
 			return nil, err

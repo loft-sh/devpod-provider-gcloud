@@ -27,7 +27,7 @@ func NewCommandCmd() *cobra.Command {
 		Use:   "command",
 		Short: "Run a command on the instance",
 		RunE: func(_ *cobra.Command, args []string) error {
-			options, err := options.FromEnv(true)
+			options, err := options.FromEnv(true, true)
 			if err != nil {
 				return err
 			}
