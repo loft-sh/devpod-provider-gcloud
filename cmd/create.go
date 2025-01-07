@@ -96,6 +96,10 @@ func buildInstance(options *options.Options) (*computepb.Instance, error) {
 					Key:   ptr.Ptr("ssh-keys"),
 					Value: ptr.Ptr("devpod:" + string(publicKey)),
 				},
+				{
+					Key:   ptr.Ptr("startup-script"),
+					Value: ptr.Ptr(options.StartupScript),
+				},
 			},
 		},
 		MachineType: ptr.Ptr(fmt.Sprintf("projects/%s/zones/%s/machineTypes/%s", options.Project, options.Zone, options.MachineType)),

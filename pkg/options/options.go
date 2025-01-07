@@ -19,6 +19,7 @@ type Options struct {
 	MachineType    string
 	ServiceAccount string
 	PublicIP       bool
+	StartupScript  string
 }
 
 func FromEnv(withMachine, withFolder bool) (*Options, error) {
@@ -57,6 +58,10 @@ func FromEnv(withMachine, withFolder bool) (*Options, error) {
 		return nil, err
 	}
 	retOptions.MachineType, err = fromEnvOrError("MACHINE_TYPE")
+	if err != nil {
+		return nil, err
+	}
+	retOptions.StartupScript, err = fromEnvOrError("STARTUP_SCRIPT")
 	if err != nil {
 		return nil, err
 	}

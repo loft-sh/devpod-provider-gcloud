@@ -105,6 +105,9 @@ options:
   TAG:
     description: A tag to attach to the instance.
     default: "devpod"
+  STARTUP_SCRIPT:
+    description: A startup script to run on the VM.
+    default: ""
   DISK_SIZE:
     description: The disk size to use (GB).
     default: "40"
