@@ -92,7 +92,7 @@ func (cmd *CommandCmd) Run(ctx context.Context, options *options.Options, log lo
 			*instance.Name,
 			"22",
 			"--local-host-port=localhost:" + port,
-			"--zone=" + *instance.Zone,
+			"--zone=" + options.Zone,
 		}...)
 
 		// open tunnel in background
