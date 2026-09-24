@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/loft-sh/devpod-provider-gcloud/pkg/gcloud"
@@ -44,6 +45,14 @@ func (cmd *CommandCmd) Run(ctx context.Context, options *options.Options, log lo
 	command := os.Getenv("COMMAND")
 	if command == "" {
 		return fmt.Errorf("command environment variable is missing")
+	}
+
+	// Fail fast on stale gcloud auth. A stale token doesn't error here — it
+	// surfaces minutes later as a plain IAP tunnel or SSH failure, which
+	// looks like a devpod bug rather than an auth problem. Bounded by its
+	// own timeout so a stuck gcloud process can't hang this command either.
+	if err := checkGcloudAuth(ctx); err != nil {
+		return err
 	}
 
 	// get private key
@@ -160,6 +169,26 @@ func (cmd *CommandCmd) Run(ctx context.Context, options *options.Options, log lo
 		}
 		time.Sleep(1 * time.Second)
 	}
+}
+
+// checkGcloudAuth confirms the local gcloud CLI can mint an access token
+// before doing anything else. gcloud auth print-access-token returns
+// quickly whether the credential is fine, expired, or missing, so this
+// turns a stale-auth failure into a clear error instead of a slow, opaque
+// one further down (tunnel start, port wait, SSH dial).
+func checkGcloudAuth(ctx context.Context) error {
+	timeoutCtx, cancelFn := context.WithTimeout(ctx, 10*time.Second)
+	defer cancelFn()
+
+	out, err := exec.CommandContext(timeoutCtx, "gcloud", "auth", "print-access-token", "--quiet").Output()
+	if err != nil {
+		return fmt.Errorf("gcloud auth check failed, run `gcloud auth login`: %w", err)
+	}
+	if strings.TrimSpace(string(out)) == "" {
+		return fmt.Errorf("gcloud auth check returned an empty token, run `gcloud auth login`")
+	}
+
+	return nil
 }
 
 func findAvailablePort() (string, error) {
